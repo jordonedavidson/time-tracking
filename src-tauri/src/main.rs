@@ -21,12 +21,51 @@ fn main() {
 fn instantiate_database() -> Result<()> {
     let database = Database::open("timetrack.db")?;
 
+    // Add timetypes table
     database.execute(
         r#"
         create table if not exists timetypes (
             id integer primary key,
             label varchar(45) not null unique,
             defaultHours int(3) not null default 0
+        );"#,
+        (),
+    )?;
+
+    // Add users table
+    database.execute(
+        r#"create table if not exists users (
+            id integer primary key,
+            username varchar(100) not null unique,
+            displayName varchar(150),
+            roles text default '{\"user\"}',
+            totals text default '{}'
+        );"#,
+        (),
+    )?;
+
+    // Add settings table
+    database.execute(
+        r#"
+        create table if not exists settings (
+            id integer primary,
+            settingName varchar(45) not null unique,
+            settingValue varchar(255) 
+        );"#,
+        (),
+    )?;
+
+    // Add entries table.
+    database.execute(
+        r#"create table if not exists entries (
+            id integer primary key,
+            users_id integer not null,
+            timetypes_id integer not null,
+            time_start datetime not null,
+            time_end datetime not null,
+            completed tinyint(1) not null default 0,
+            foreign key (users_id) references users (id),
+            foreign key (timetypes_id) references timetypes (id)
         );"#,
         (),
     )?;
