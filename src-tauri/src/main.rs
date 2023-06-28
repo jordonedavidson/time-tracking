@@ -17,6 +17,10 @@ fn main() {
 
     println!("Result of timetype get is {:?}", r);
 
+    let tt = Timetype::get_all();
+
+    println!("Result of get_all: {:?}", tt);
+
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![greet])
         .run(tauri::generate_context!())

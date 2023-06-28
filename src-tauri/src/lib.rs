@@ -37,4 +37,34 @@ impl Timetype {
             Some(x) => x,
         }
     }
+
+    pub fn get_all() -> Result<Vec<Timetype>, Error> {
+        let database = Connection::open("timetrack.db")?;
+
+        let mut statement = database.prepare("select * from timetypes order by label ASC")?;
+
+        let results = statement.query_map((), |row| {
+            Ok(Timetype {
+                id: row.get(0)?,
+                label: row.get(1)?,
+                default_hours: row.get(2)?,
+            })
+        });
+
+        let mut timetypes = Vec::new();
+
+        match results {
+            Ok(x) => {
+                for result in x {
+                    match result {
+                        Ok(y) => timetypes.push(y),
+                        Err(e) => return Err(e),
+                    }
+                }
+            }
+            Err(e) => println!("Something went wrong {:?}", e),
+        };
+
+        Ok(timetypes)
+    }
 }
