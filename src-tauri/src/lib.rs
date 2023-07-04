@@ -1,10 +1,24 @@
 use rusqlite::{Connection, Error, Result};
+use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 #[derive(Debug)]
 pub struct Timetype {
     pub id: i32,
     pub label: String,
     pub default_hours: i32,
+}
+
+impl Serialize for Timetype {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("Timetype", 3)?;
+        state.serialize_field("id", &self.id)?;
+        state.serialize_field("label", &self.label)?;
+        state.serialize_field("default_hours", &self.default_hours)?;
+        state.end()
+    }
 }
 
 impl Timetype {

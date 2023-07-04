@@ -2,12 +2,22 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use mta_timetracking::Timetype;
-use rusqlite::{Connection, Result};
+use rusqlite::{Connection, Error, Result};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
+}
+
+#[tauri::command]
+fn list_timetypes() -> Result<Vec<Timetype>, String> {
+    let all_timetypes = Timetype::get_all();
+
+    match all_timetypes {
+        Ok(v) => return Ok(v),
+        Err(e) => return Err(e.to_string()),
+    }
 }
 
 fn main() {
@@ -23,6 +33,7 @@ fn main() {
 
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![list_timetypes])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
