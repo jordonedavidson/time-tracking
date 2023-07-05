@@ -11,11 +11,22 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn list_timetypes() -> Result<Vec<Timetype>, String> {
+async fn list_timetypes() -> Result<Vec<Timetype>, String> {
     let all_timetypes = Timetype::get_all();
 
     match all_timetypes {
         Ok(v) => return Ok(v),
+        Err(e) => return Err(e.to_string()),
+    }
+}
+
+#[tauri::command]
+async fn get_timetype(id: i32) -> Result<Timetype, String> {
+    println!("getting timetype id {id}");
+    let timetype = Timetype::get(id);
+
+    match timetype {
+        Ok(t) => return Ok(t),
         Err(e) => return Err(e.to_string()),
     }
 }
@@ -34,6 +45,7 @@ fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![greet])
         .invoke_handler(tauri::generate_handler![list_timetypes])
+        .invoke_handler(tauri::generate_handler![get_timetype])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

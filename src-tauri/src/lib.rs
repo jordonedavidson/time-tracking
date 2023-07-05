@@ -45,6 +45,7 @@ impl Timetype {
         // This query can return at most one result so we take it.
         let result = results.next();
 
+        println!("get {} returned {:?}", &id, &result);
         // Either there are no rows or a Result. Return the QueryReturnedNoRows error or the Timetype result.
         match result {
             None => Err(Error::QueryReturnedNoRows),

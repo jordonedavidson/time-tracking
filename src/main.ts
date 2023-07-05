@@ -1,4 +1,6 @@
 import { invoke } from "@tauri-apps/api/tauri";
+import { TimeType } from "./components/TimeType";
+//import { TimeType } from "./components/TimeType"
 
 type TimeType  = {
   id: Number,
@@ -9,6 +11,7 @@ type TimeType  = {
 let greetInputEl: HTMLInputElement | null;
 let greetMsgEl: HTMLElement | null;
 let listingEl: HTMLDivElement | null;
+let ttEl: HTMLDivElement | null;
 
 async function greet() {
   if (greetMsgEl && greetInputEl) {
@@ -37,13 +40,32 @@ async function timeTypeListing() {
   }
 }
 
+async function getTimeTypeById(id: Number) : Promise<void> {
+  if (ttEl) {
+    const p = document.createElement('p')
+    await invoke("get_timetype", {id: id})
+        .then(t => {
+          p.innerHTML = `<b>${t.label}</b>: ${t.default_hours}`
+        })
+        .catch (e => {
+          p.innerText = e.message
+          p.className = 'error'
+        })
+    
+    ttEl?.appendChild(p)
+  }
+
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   greetInputEl = document.querySelector("#greet-input");
   greetMsgEl = document.querySelector("#greet-msg");
   listingEl = document.querySelector("#timetypes");
+  ttEl = document.querySelector("#timetype");
   document.querySelector("#greet-form")?.addEventListener("submit", (e) => {
     e.preventDefault();
     greet();
   });
   timeTypeListing();
+  getTimeTypeById(1);
 });
