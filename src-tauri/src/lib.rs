@@ -77,7 +77,10 @@ impl Timetype {
                     }
                 }
             }
-            Err(e) => println!("Something went wrong {:?}", e),
+            Err(e) => {
+                println!("Something went wrong {:?}", e);
+                return Err(e);
+            }
         };
 
         Ok(timetypes)
