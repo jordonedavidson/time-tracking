@@ -71,9 +71,13 @@ impl Timetype {
         match results {
             Ok(x) => {
                 for result in x {
+                    println!("This result: {:?}", result);
                     match result {
                         Ok(y) => timetypes.push(y),
-                        Err(e) => return Err(e),
+                        Err(re) => {
+                            println!("error in results match: {:?}", re);
+                            return Err(re);
+                        }
                     }
                 }
             }

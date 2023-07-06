@@ -1,6 +1,4 @@
 import { invoke } from "@tauri-apps/api/tauri";
-import { TimeType } from "./components/TimeType";
-//import { TimeType } from "./components/TimeType"
 
 type TimeType  = {
   id: Number,
@@ -24,19 +22,22 @@ async function greet() {
 
 async function timeTypeListing() {
   if (listingEl) {
-    const timeTypes = await invoke("list_timetypes")
+    console.log("listingEl is not null");
+    
+    await invoke("list_timetypes")
+      .then(timeTypes => {
+        timeTypes.forEach(t => {
+          const p = document.createElement('p')
+          p.innerHTML += `<b>${t.id}</b>: ${t.label} - ${t.default_hours}`
+          listingEl?.appendChild(p)
+        })
+      })
       .catch(e => {
         const p = document.createElement('p')
-        p.innerText = e.message
+        p.innerText = `List time types error: ${e.message}`
         p.className = 'error'
         listingEl?.appendChild(p)
-      }) as Array<TimeType>
-
-    timeTypes.forEach(t => {
-      const p = document.createElement('p')
-      p.innerHTML = `<b>${t.id}</b>: ${t.label} - ${t.default_hours}`
-      listingEl?.appendChild(p)
-    })
+      })
   }
 }
 
@@ -44,7 +45,7 @@ async function getTimeTypeById(id: Number) : Promise<void> {
   if (ttEl) {
     const p = document.createElement('p')
     await invoke("get_timetype", {id: id})
-        .then(t => {
+        .then((t) => {
           p.innerHTML = `<b>${t.label}</b>: ${t.default_hours}`
         })
         .catch (e => {

@@ -11,41 +11,49 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-async fn list_timetypes() -> Result<Vec<Timetype>, String> {
+fn list_timetypes() -> Result<Vec<Timetype>, String> {
     let all_timetypes = Timetype::get_all();
-
+    println!("all_timetypes: {:?}", all_timetypes);
     match all_timetypes {
-        Ok(v) => return Ok(v),
-        Err(e) => return Err(e.to_string()),
+        Ok(v) => {
+            println!("Match all_timetypes Ok: {:?}", v);
+            return Ok(v);
+        }
+        Err(e) => {
+            println!("Error in list_timetypes: {:?}", e);
+            let error_string = format!("{e}");
+            return Err(error_string);
+        }
     }
 }
 
 #[tauri::command]
-async fn get_timetype(id: i32) -> Result<Timetype, String> {
+fn get_timetype(id: i32) -> Result<Timetype, String> {
     println!("getting timetype id {id}");
     let timetype = Timetype::get(id);
 
     match timetype {
         Ok(t) => return Ok(t),
-        Err(e) => return Err(e.to_string()),
+        Err(e) => {
+            let error_string = format!("{e}");
+            return Err(error_string);
+        }
     }
 }
 
 fn main() {
     let _idb = instantiate_database();
 
-    let r = Timetype::get(2);
-
-    println!("Result of timetype get is {:?}", r);
-
     let tt = Timetype::get_all();
 
     println!("Result of get_all: {:?}", tt);
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
-        .invoke_handler(tauri::generate_handler![list_timetypes])
-        .invoke_handler(tauri::generate_handler![get_timetype])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            list_timetypes,
+            get_timetype
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
