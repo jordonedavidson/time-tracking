@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="/src/styles.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tauri App</title>
-  <script type="module" src="/src/main.ts" defer></script>
+  <script type="module" src="/src/index.tsx" defer></script>
   <style>
     .logo.vite:hover {
       filter: drop-shadow(0 0 2em #747bff);
@@ -34,16 +34,7 @@
       </a>
     </div>
 
-    <p>Click on the Tauri logo to learn more about the framework</p>
-
-    <form class="row" id="greet-form">
-      <input id="greet-input" placeholder="Enter a name..." />
-      <button type="submit">Greet</button>
-    </form>
-
-    <p id="greet-msg"></p>
-    <div id="timetypes"></div>
-    <div id="timetype"></div>
+    <main id="app"></main>
   </div>
 </body>
 
