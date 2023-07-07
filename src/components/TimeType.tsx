@@ -1,3 +1,12 @@
+/**
+ * Functions, components and type definintions for time types.
+ * 
+ * @author Jordon Davidson <jodavidson@mta.ca>
+ * 
+ * @since 0.1.0
+ * @version 0.1.0
+ */
+
 import { invoke } from "@tauri-apps/api/tauri";
 import React, { useState, useEffect } from "react"
 
@@ -21,6 +30,20 @@ async function getTimeTypeById(id: Number) : Promise<TimeType> {
     
     console.log(timeType)
     return timeType
+}
+
+async function getAllTimeTypes() : Promise<Array<TimeType>> {
+    const allTimeTypes = await invoke("list_timetypes")
+        .catch( e => {
+            const ttError : TimeType = {
+                id: 0,
+                label: `Error: ${e.message}`,
+                default_hours: 0,
+            }
+            return [ttError]
+        }) as Array<TimeType>
+
+    return allTimeTypes
 }
 
 export const TimeType : React.FC = () => {
