@@ -9,12 +9,18 @@
 
 import React from "react";
 import { TimeType } from "./TimeType";
+import { UserType } from "./User";
 
 export const App: React.FC = () => {
 
     return (
+        <>
         <div>
             <TimeType />
         </div>
+        <div>
+            <UserType />
+        </div>
+        </>
     )
 }

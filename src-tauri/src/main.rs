@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use mta_timetracking::timetype::Timetype;
+use mta_timetracking::{timetype::Timetype, user::User};
 use rusqlite::{Connection, Result};
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -41,6 +41,19 @@ fn get_timetype(id: i32) -> Result<Timetype, String> {
     }
 }
 
+#[tauri::command]
+async fn get_user_by_username(username: String) -> Result<User, String> {
+    let user = User::get_by_username(username);
+
+    match user {
+        Ok(u) => return Ok(u),
+        Err(e) => {
+            let error_string = format!("{e}");
+            return Err(error_string);
+        }
+    }
+}
+
 fn main() {
     let _idb = instantiate_database();
 
@@ -52,7 +65,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             greet,
             list_timetypes,
-            get_timetype
+            get_timetype,
+            get_user_by_username,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
